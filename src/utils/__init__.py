@@ -1,4 +1,4 @@
-from .logger import Logger
-from .decorators import (
+from utils.logger import F1Logger
+from utils.decorators import (
     validate_payload,
 )
