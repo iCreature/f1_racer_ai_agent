@@ -1,27 +1,36 @@
-from __future__ import annotations
+# src/race_nlp/prompts.py
+from string import Formatter
 from enum import Enum
-from typing import Dict, Optional, Set
-from pydantic import BaseModel, ValidationError, validator
+from pydantic import (
+    BaseModel, 
+    computed_field, 
+    field_validator,
+    ConfigDict
+)
+from typing import Dict, Set
 from src.utils.logger import F1Logger
 
 logger = F1Logger()
 
 class TemplateConfig(BaseModel):
-    """Pydantic model for template validation"""
+    """Pydantic v2 template configuration with computed fields"""
+    model_config = ConfigDict(validate_assignment=True)
+
     template: str
     required_context: Set[str]
-    allowed_placeholders: Set[str]
     default_values: Dict[str, str] = {}
 
-    @validator('allowed_placeholders', always=True)
-    def validate_placeholders(cls, v, values):
+    @computed_field
+    @property
+    def allowed_placeholders(self) -> Set[str]:
         """Automatically detect placeholders from template"""
-        template = values.get('template', '')
-        detected = {name for _, name, _, _ in Formatter().parse(template) if name}
-        return detected
+        return {
+            name 
+            for _, name, _, _ in Formatter().parse(self.template) 
+            if name
+        }
 
 class TemplateName(str, Enum):
-    """Type-safe template identifiers"""
     POST_RACE = "post_race"
     REPLY_FAN = "reply_fan"
     PRACTICE_UPDATE = "practice_update"
@@ -29,20 +38,16 @@ class TemplateName(str, Enum):
     RACE_STRATEGY = "race_strategy"
 
 class PromptTemplates:
-    """
-    Centralized prompt template registry with validation and context management.
-    Implements TemplateHandlerProtocol from generate.py
-    """
-    
     _registry: Dict[TemplateName, TemplateConfig] = {
+        # Consolidated registry with all templates
         TemplateName.POST_RACE: TemplateConfig(
             template=(
                 "Write a {sentiment} social media post about the {race_name} race. "
                 "Mention {team} team. Result: {result}. "
                 "Include hashtags: #{race_hashtag} #{team_hashtag}"
             ),
-            required_context={'race_name', 'team', 'result'},
-            default_values={'sentiment': 'neutral'}
+            required_context={"race_name", "team", "result"},
+            default_values={"sentiment": "neutral"}
         ),
         TemplateName.REPLY_FAN: TemplateConfig(
             template=(
@@ -50,17 +55,24 @@ class PromptTemplates:
                 "Tone: {tone}. Max length: 280 characters. "
                 "Include emoji related to {topic}"
             ),
-            required_context={'topic'},
-            default_values={'tone': 'positive'}
+            required_context={"topic"},
+            default_values={"tone": "positive"}
         ),
+        TemplateName.RACE_STRATEGY: TemplateConfig(
+            template="Race strategy for {track} with {tires}",
+            required_context={"track", "tires"},
+            default_values={}
+        ),
+        # Add missing templates from your Enum
         TemplateName.PRACTICE_UPDATE: TemplateConfig(
-            template=(
-                "Create practice session update for {session_type}. "
-                "Car feeling: {car_feeling}. "
-                "Focus area: {focus_area}. "
-                "Include weather info: {weather}"
-            ),
-            required_context={'session_type', 'car_feeling'}
+            template="Practice session update: {weather} conditions, {lap_times}",
+            required_context={"weather", "lap_times"},
+            default_values={}
+        ),
+        TemplateName.MENTION_TEAMMATE: TemplateConfig(
+            template="Teammate collaboration: {teammate_name} did {achievement}",
+            required_context={"teammate_name", "achievement"},
+            default_values={}
         )
     }
 

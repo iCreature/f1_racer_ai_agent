@@ -1,16 +1,17 @@
+# src/utils/logger.py
 import logging
 from datetime import datetime
 from typing import Optional
 
 class F1Logger:
-    """Logging utility for F1 Agent with structured context logging."""
+    """Structured logging for F1 Agent components"""
     
     def __init__(self, name: str = "F1RacerAI"):
         self.logger = logging.getLogger(name)
         self._configure_logger()
 
     def _configure_logger(self) -> None:
-        """Initialize logger configuration once."""
+        """Initialize logger configuration once"""
         if not self.logger.handlers:
             handler = logging.StreamHandler()
             formatter = logging.Formatter(
@@ -28,24 +29,19 @@ class F1Logger:
         response: str,
         exc_info: Optional[Exception] = None
     ) -> None:
-        """Base logging method implementing DRY principle."""
+        """Base logging method with message fix"""
         self.logger.log(
             level,
-            extra={
-                'action': action,
-                'response': response
-            },
+            "-",  # Required msg parameter
+            extra={'action': action, 'response': response},
             exc_info=exc_info
         )
 
     def info(self, action: str, response: str) -> None:
-        """Log informational message."""
         self._log(logging.INFO, action, response)
 
     def warn(self, action: str, response: str) -> None:
-        """Log warning message."""
         self._log(logging.WARNING, action, response)
 
     def error(self, action: str, response: str, exc: Optional[Exception] = None) -> None:
-        """Log error message with optional exception."""
         self._log(logging.ERROR, action, response, exc_info=exc)
