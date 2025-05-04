@@ -75,7 +75,7 @@ def test_missing_context_validation():
     with pytest.raises(ValueError):
         PromptTemplates.format_template(
             TemplateName.POST_RACE,
-            {"team": "Mercedes"}  # Missing race_name
+            {"team": "Mercedes"} 
         )
 
 def test_template_registration():
@@ -132,7 +132,7 @@ def test_error_propagation(text_generator, mock_pipeline):
                     "result": "P1",
                     "race_hashtag": "TestHash",
                     "sentiment": "neutral",
-                    "team_hashtag": "TestTeamHash" # Added missing context key
+                    "team_hashtag": "TestTeamHash"
                 }
             )
     
@@ -145,8 +145,6 @@ def test_context_validation_logging(text_generator, caplog):
             {"team": "Mercedes"}
         )
     
-        # The actual log message includes the specific missing key
-        # The log message format includes the level, logger name, file, line, and the message
         assert "ERROR    F1RacerAI:logger.py" in caplog.text
         assert "Missing context key: 'sentiment'" in caplog.text
 

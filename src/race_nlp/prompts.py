@@ -1,4 +1,3 @@
-# src/race_nlp/prompts.py
 from string import Formatter
 from enum import Enum
 from pydantic import (
@@ -39,7 +38,6 @@ class TemplateName(str, Enum):
 
 class PromptTemplates:
     _registry: Dict[TemplateName, TemplateConfig] = {
-        # Consolidated registry with all templates
         TemplateName.POST_RACE: TemplateConfig(
             template=(
                 "Write a {sentiment} social media post about the {race_name} race. "
@@ -63,7 +61,6 @@ class PromptTemplates:
             required_context={"track", "tires"},
             default_values={}
         ),
-        # Add missing templates from your Enum
         TemplateName.PRACTICE_UPDATE: TemplateConfig(
             template="Practice session update: {weather} conditions, {lap_times}",
             required_context={"weather", "lap_times"},

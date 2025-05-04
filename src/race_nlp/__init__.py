@@ -44,5 +44,5 @@ from ..utils.logger import F1Logger
 logger = F1Logger(name="race_nlp")
 logger.info(
     action="package_init",
-    response={"message": "Race NLP package initialized"}  # Structured response
+    response={"message": "Race NLP package initialized"}
 )

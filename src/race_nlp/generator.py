@@ -12,7 +12,7 @@ from pydantic import (
     ConfigDict,
     field_validator,
     model_validator,
-    ValidationError # Import ValidationError
+    ValidationError
 )
 from src.utils.logger import F1Logger
 from .prompts import PromptTemplates, TemplateConfig
@@ -55,7 +55,6 @@ class TemplateHandler(BaseModel):
                 response=f"Missing template: {template_name}"
             )
             raise ValueError(f"Template '{template_name}' not found")
-        #return getattr(PromptTemplates, template_name.value)
     
     @validate_call
     def format_template(self, template_name: str, context: dict) -> str:
@@ -102,31 +101,16 @@ class TextGenerator(BaseModel):
     def generate(self, template_name: str, context: dict) -> str:
         """Main generation workflow"""
         try:
-            # First, format the template. This step includes template name validation
-            # and context key validation.
             prompt = self.template_handler.format_template(template_name, context)
 
-            # If formatting is successful, proceed to LLM generation.
             return self._generate_with_llm(prompt)
 
-        # Catch specific validation errors from template handling
         except (ValueError, ValidationError) as e:
-             # These are input/template issues, not LLM failures.
-             # Raise a GenerationError immediately.
              raise GenerationError(f"Template or context validation failed: {e}", original=e) from e
 
-        # Catch any other exceptions that might occur during _generate_with_llm
         except Exception as e:
             if self.enable_fallback:
-                # If fallback is enabled, try the fallback response.
-                # The fallback response itself calls format_template again,
-                # but the tests seem to expect this path for fallback.
-                # However, the test_context_validation_logging fails *within*
-                # the fallback path, suggesting the fallback path also needs
-                # to handle the ValueError from format_template. Let's adjust
-                # the fallback method to also catch these specific errors.
                 return self._fallback_response(template_name, context)
-            # If fallback is disabled, raise a GenerationError for LLM failures.
             raise GenerationError("Text generation failed", original=e) from e
 
     def _fallback_response(self, template_name: str, context: dict) -> str:
@@ -136,11 +120,8 @@ class TextGenerator(BaseModel):
             response={"template": template_name}
         )
         try:
-            # The fallback response also needs to handle potential validation errors
-            # during template formatting, as seen in test_context_validation_logging.
             return self.template_handler.format_template(template_name, context)
         except (ValueError, ValidationError) as e:
-            # If fallback fails due to validation, raise a GenerationError
             raise GenerationError(f"Fallback template formatting failed: {e}", original=e) from e
 
     def _generate_with_llm(self, prompt: str) -> str:
