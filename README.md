@@ -24,7 +24,6 @@ This project implements an AI agent designed to generate social media posts and 
     ```bash
     git clone <repository_url>
     cd f1_racer_ai_agent
-    checkout master branch
     ```
 2.  Create a virtual environment (recommended):
     ```bash
@@ -129,6 +128,17 @@ Retrieves the agent's current internal context.
 
 -   **Request Body:** None
 -   **Response:** `AgentResponse` schema (data contains the current context dictionary)
+
+### API as a Simulation Pipeline
+
+The API endpoints are designed to simulate the data flow and interactions that an AI agent would experience in a real-world social media environment.
+
+-   **`/update_context`**: Represents the agent receiving new information from the environment (e.g., race data updates, fan comments, team communications). This information is processed and integrated into the agent's internal state or "context".
+-   **`/get_context`**: Allows external systems or monitoring tools to inspect the agent's current understanding and state based on the information it has received.
+-   **`/generate_post`**: Simulates the agent deciding to generate a social media post or reply. It takes the current context and a specific prompt template as input and produces the desired text output. This represents the agent's "speak" action.
+-   **`/simulate_like` / `/simulate`**: Represent the agent performing actions in the simulated environment, such as liking a post, commenting, or sharing. These endpoints trigger the agent's "act" functionality based on simulated external events or internal decisions.
+
+This API structure allows for testing and interacting with the agent's core logic (thinking, speaking, acting) by providing simulated inputs and observing the outputs and state changes, mimicking a simplified data pipeline.
 
 ### Available Prompts
 
