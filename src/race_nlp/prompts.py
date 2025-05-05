@@ -49,12 +49,15 @@ class PromptTemplates:
         ),
         TemplateName.REPLY_FAN: TemplateConfig(
             template=(
-                "Respond to a fan comment about {topic}. "
+                "You are an F1 driver. Respond to the following fan comment:\n"
+                "Fan comment: \"{fan_comment}\"\n"
+                "Your response should be about {topic}. "
+                "Consider your recent performance or the context of the {race_context} if relevant. "
                 "Tone: {tone}. Max length: 280 characters. "
-                "Include emoji related to {topic}"
+                "Include emoji related to {topic} or the fan comment."
             ),
-            required_context={"topic"},
-            default_values={"tone": "positive"}
+            required_context={"fan_comment", "topic"},
+            default_values={"tone": "positive", "race_context": "current situation"}
         ),
         TemplateName.RACE_STRATEGY: TemplateConfig(
             template="Race strategy for {track} with {tires}",

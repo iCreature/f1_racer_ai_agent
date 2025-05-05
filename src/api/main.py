@@ -47,20 +47,6 @@ async def generate_post(request: GeneratePostRequest):
         logger.error(action="api_generate_post_error", response=str(e))
         raise HTTPException(status_code=500, detail=f"Failed to generate post: {e}")
 
-@app.post("/reply_comment", response_model=AgentResponse)
-async def reply_comment(request: ReplyCommentRequest):
-    """Simulates replying to a comment."""
-    if not f1_agent:
-        raise HTTPException(status_code=500, detail="Agent not initialized.")
-    try:
-        result = f1_agent.act("reply_comment", request.model_dump()) # Use model_dump() for Pydantic v2+
-        return AgentResponse(status="success", message="Comment reply simulated.", data=result)
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=f"Invalid action data: {e}")
-    except Exception as e:
-        logger.error(action="api_reply_comment_error", response=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to simulate comment reply: {e}")
-
 @app.post("/simulate_like", response_model=AgentResponse)
 async def simulate_like(request: SimulateLikeRequest):
     """Simulates liking a post."""
