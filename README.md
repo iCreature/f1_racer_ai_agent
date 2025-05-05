@@ -24,6 +24,7 @@ This project implements an AI agent designed to generate social media posts and 
     ```bash
     git clone <repository_url>
     cd f1_racer_ai_agent
+    checkout master branch
     ```
 2.  Create a virtual environment (recommended):
     ```bash
