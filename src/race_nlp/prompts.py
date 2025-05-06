@@ -49,25 +49,40 @@ class PromptTemplates:
         ),
         TemplateName.REPLY_FAN: TemplateConfig(
             template=(
-                "Respond to a fan comment about {topic}. "
+                "You are an F1 driver. Respond to the following fan comment:\n"
+                "Fan comment: \"{fan_comment}\"\n"
+                "Your response should be about {topic}. "
+                "Consider your recent performance or the context of the {race_context} if relevant. "
                 "Tone: {tone}. Max length: 280 characters. "
-                "Include emoji related to {topic}"
+                "Include emoji related to {topic} or the fan comment."
             ),
-            required_context={"topic"},
-            default_values={"tone": "positive"}
+            required_context={"fan_comment", "topic"},
+            default_values={"tone": "positive", "race_context": "current situation"}
         ),
         TemplateName.RACE_STRATEGY: TemplateConfig(
-            template="Race strategy for {track} with {tires}",
-            required_context={"track", "tires"},
+            template=(
+                "As an F1 driver, discuss the race strategy for the upcoming {track} circuit. "
+                "Mention the planned starting tire compound: {tires}. "
+                "Include considerations about the current {weather} conditions and the target {stint_length} for the first stint."
+            ),
+            required_context={"track", "tires", "weather", "stint_length"},
             default_values={}
         ),
         TemplateName.PRACTICE_UPDATE: TemplateConfig(
-            template="Practice session update: {weather} conditions, {lap_times}",
-            required_context={"weather", "lap_times"},
+            template=(
+                "Provide a brief update on the practice session at {track}. "
+                "Describe the {weather} conditions and mention the best lap time achieved: {lap_times}. "
+                "Comment on the car's feeling: {car_feeling} and the main {focus_area} of the session."
+            ),
+            required_context={"track", "weather", "lap_times", "car_feeling", "focus_area"},
             default_values={}
         ),
         TemplateName.MENTION_TEAMMATE: TemplateConfig(
-            template="Teammate collaboration: {teammate_name} did {achievement}",
+            template=(
+                "Write a supportive social media post acknowledging your teammate {teammate_name}. "
+                "Highlight their recent achievement: {achievement}. "
+                "Explain how this achievement benefits the team."
+            ),
             required_context={"teammate_name", "achievement"},
             default_values={}
         )

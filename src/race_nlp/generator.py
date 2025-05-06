@@ -138,6 +138,9 @@ class TextGenerator(BaseModel):
                 num_return_sequences=self.num_return_sequences
             )
             result = outputs[0]["generated_text"]
+            # Remove the original prompt from the generated text
+            if result.startswith(prompt):
+                result = result[len(prompt):].strip()
         except Exception as e:
             logger.error(
                 action="llm_invocation_error",

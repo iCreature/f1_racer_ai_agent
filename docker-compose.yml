@@ -1,0 +1,15 @@
+services:
+  f1-agent-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: f1-agent-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    environment:
+      - PYTHONPATH=/app/src
+      - LOG_LEVEL=info
+    # Exec-form avoids shell parsing errors
+    command: ["uvicorn", "src.api.main:app", "--host", "0.0.0.0", "--port", "8000"]
