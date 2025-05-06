@@ -43,6 +43,8 @@ Ensure Docker and Docker Compose are installed and running.
 docker-compose up --build
 ```
 
+The application takes some time to run roughly 4 minutes, 
+
 This will build the Docker image and start the FastAPI application, accessible at `http://localhost:8000`.
 
 ## Running the Application
