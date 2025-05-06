@@ -147,9 +147,9 @@ This API structure allows for testing and interacting with the agent's core logi
 The `src/race_nlp/prompts.py` file defines the available templates for generating text. Each template requires specific context data.
 
 -   **`post_race`**: Generates a social media post about a race.
-    -   **Required Context:** `race_name`, `team`, `result`
-    -   **Optional Context:** `sentiment` (default: "neutral")
-    -   **Placeholders:** `race_name`, `team`, `result`, `sentiment`, `race_hashtag`, `team_hashtag`
+    -   **Required Context:** `race_name`, `team`, `result`, `car_feeling`, `weather`, `race_hashtag`, `team_hashtag`
+    -   **Optional Context:** `sentiment` (default: "challenging")
+    -   **Placeholders:** `race_name`, `team`, `result`, `sentiment`, `car_feeling`, `weather`, `race_hashtag`, `team_hashtag`
     -   **Example Request:**
         ```bash
         curl -X POST http://localhost:8000/generate_post \
@@ -161,6 +161,8 @@ The `src/race_nlp/prompts.py` file defines the available templates for generatin
             "team": "Red Bull Racing",
             "result": "P1",
             "sentiment": "thrilled",
+            "car_feeling": "great",
+            "weather": "sunny",
             "race_hashtag": "#MonacoGP",
             "team_hashtag": "#RedBullRacing"
           }
@@ -168,9 +170,9 @@ The `src/race_nlp/prompts.py` file defines the available templates for generatin
         ```
 
 -   **`reply_fan`**: Generates a reply to a fan comment.
-    -   **Required Context:** `fan_comment`, `topic`
-    -   **Optional Context:** `tone` (default: "positive"), `race_context` (default: "current situation")
-    -   **Placeholders:** `fan_comment`, `topic`, `tone`, `race_context`
+    -   **Required Context:** `fan_comment`, `topic`, `race_context`, `tone`
+    -   **Optional Context:** None
+    -   **Placeholders:** `fan_comment`, `topic`, `race_context`, `tone`
     -   **Example Request:**
         ```bash
         curl -X POST http://localhost:8000/generate_post \
@@ -187,9 +189,9 @@ The `src/race_nlp/prompts.py` file defines the available templates for generatin
         ```
 
 -   **`race_strategy`**: Generates text about race strategy.
-    -   **Required Context:** `track`, `tires`
+    -   **Required Context:** `track`, `tires`, `weather`, `stint_length`
     -   **Optional Context:** None
-    -   **Placeholders:** `track`, `tires`
+    -   **Placeholders:** `track`, `tires`, `weather`, `stint_length`
     -   **Example Request:**
         ```bash
         curl -X POST http://localhost:8000/generate_post \
@@ -198,15 +200,17 @@ The `src/race_nlp/prompts.py` file defines the available templates for generatin
           "template_name": "race_strategy",
           "context_data": {
             "track": "Silverstone",
-            "tires": "Mediums"
+            "tires": "Mediums",
+            "weather": "cloudy",
+            "stint_length": "20 laps"
           }
         }'
         ```
 
 -   **`practice_update`**: Generates a practice session update.
-    -   **Required Context:** `weather`, `lap_times`
+    -   **Required Context:** `track`, `weather`, `lap_times`, `car_feeling`, `focus_area`
     -   **Optional Context:** None
-    -   **Placeholders:** `weather`, `lap_times`
+    -   **Placeholders:** `track`, `weather`, `lap_times`, `car_feeling`, `focus_area`
     -   **Example Request:**
         ```bash
         curl -X POST http://localhost:8000/generate_post \
@@ -214,16 +218,19 @@ The `src/race_nlp/prompts.py` file defines the available templates for generatin
         -d '{
           "template_name": "practice_update",
           "context_data": {
-            "weather": "Sunny",
-            "lap_times": "1:28.500"
+            "track": "Spa-Francorchamps",
+            "weather": "wet",
+            "lap_times": "1:50.123",
+            "car_feeling": "tricky",
+            "focus_area": "long run pace"
           }
         }'
         ```
 
 -   **`mention_teammate`**: Generates text mentioning a teammate's achievement.
-    -   **Required Context:** `teammate_name`, `achievement`
+    -   **Required Context:** `teammate_name`, `achievement`, `team`
     -   **Optional Context:** None
-    -   **Placeholders:** `teammate_name`, `achievement`
+    -   **Placeholders:** `teammate_name`, `achievement`, `team`
     -   **Example Request:**
         ```bash
         curl -X POST http://localhost:8000/generate_post \
@@ -232,7 +239,8 @@ The `src/race_nlp/prompts.py` file defines the available templates for generatin
           "template_name": "mention_teammate",
           "context_data": {
             "teammate_name": "Sergio Perez",
-            "achievement": "a great qualifying lap"
+            "achievement": "a great qualifying lap",
+            "team": "Red Bull Racing"
           }
         }'
         ```

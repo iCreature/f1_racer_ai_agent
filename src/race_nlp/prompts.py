@@ -40,50 +40,49 @@ class PromptTemplates:
     _registry: Dict[TemplateName, TemplateConfig] = {
         TemplateName.POST_RACE: TemplateConfig(
             template=(
-                "Write a {sentiment} social media post about the {race_name} race. "
-                "Mention {team} team. Result: {result}. "
-                "Include hashtags: #{race_hashtag} #{team_hashtag}"
+                "Reflecting on the {race_name} race weekend from inside the cockpit. It was a {sentiment} one for us at {team}. "
+                "Finished P{result}. The car felt {car_feeling} out there, especially with the {weather} conditions making things tricky. "
+                "Not the easiest race, but we fought hard and gathered crucial data. Now, it's straight into the debrief with the engineers to understand everything and find those areas to improve for the next round. "
+                "Massive thanks to every single person in the team, both here at the track and back at the factory. We're all pushing together! "
+                "#{race_hashtag} #{team_hashtag}"
             ),
-            required_context={"race_name", "team", "result"},
-            default_values={"sentiment": "neutral"}
+            required_context={"race_name", "team", "result", "car_feeling", "weather", "race_hashtag", "team_hashtag"},
+            default_values={"sentiment": "challenging"}
         ),
         TemplateName.REPLY_FAN: TemplateConfig(
             template=(
-                "You are an F1 driver. Respond to the following fan comment:\n"
-                "Fan comment: \"{fan_comment}\"\n"
-                "Your response should be about {topic}. "
-                "Consider your recent performance or the context of the {race_context} if relevant. "
-                "Tone: {tone}. Max length: 280 characters. "
-                "Include emoji related to {topic} or the fan comment."
+                "Hey! Thanks for the message, really appreciate you reaching out. Your comment about \"{fan_comment}\" is a great point. "
+                "Thinking about {topic}, it's definitely something we're always working on in F1, constantly looking for that edge. "
+                "Given the context of {race_context}, my perspective on it is... [Generate a natural, authentic response as an F1 driver. Adopt a {tone} tone based on the context provided, integrating the {race_context} naturally into the response. Use language appropriate for social media, potentially including F1 terms where natural. Focus on generating a unique response based on the specific context provided, avoiding generic phrases. Keep it concise, max 280 characters. Include a relevant emoji related to {topic} or the fan comment.]"
             ),
-            required_context={"fan_comment", "topic"},
-            default_values={"tone": "positive", "race_context": "current situation"}
+            required_context={"fan_comment", "topic", "race_context", "tone"},
+            default_values={}
         ),
         TemplateName.RACE_STRATEGY: TemplateConfig(
             template=(
-                "As an F1 driver, discuss the race strategy for the upcoming {track} circuit. "
-                "Mention the planned starting tire compound: {tires}. "
-                "Include considerations about the current {weather} conditions and the target {stint_length} for the first stint."
+                "Getting ready to hit the track at {track}. Strategy is going to be absolutely crucial here, especially with how quickly things can change over a race distance. "
+                "Current plan is to start on the {tires} compound, but we're constantly analyzing the data and the latest {weather} forecast to be ready for anything. "
+                "Targeting a {stint_length} first stint, but we need to be ready to react to how the race unfolds and manage the tires effectively. Flexibility is absolutely key!"
             ),
             required_context={"track", "tires", "weather", "stint_length"},
             default_values={}
         ),
         TemplateName.PRACTICE_UPDATE: TemplateConfig(
             template=(
-                "Provide a brief update on the practice session at {track}. "
-                "Describe the {weather} conditions and mention the best lap time achieved: {lap_times}. "
-                "Comment on the car's feeling: {car_feeling} and the main {focus_area} of the session."
+                "Practice sessions wrapped up at {track}. Conditions were {weather}. "
+                "Best lap time was {lap_times}. The car felt {car_feeling} today - still fine-tuning things to get it exactly where we want it for qualifying and the race, but we're making solid progress on the {focus_area}. "
+                "Lots of data for the engineers to crunch through tonight."
             ),
             required_context={"track", "weather", "lap_times", "car_feeling", "focus_area"},
             default_values={}
         ),
         TemplateName.MENTION_TEAMMATE: TemplateConfig(
             template=(
-                "Write a supportive social media post acknowledging your teammate {teammate_name}. "
-                "Highlight their recent achievement: {achievement}. "
-                "Explain how this achievement benefits the team."
+                "Huge congratulations to my teammate {teammate_name} on their {achievement}! "
+                "Brilliant job out there. That result is a massive boost for everyone at {team} and really shows the strength of our package this season. "
+                "Great teamwork and looking forward to continuing to push together!"
             ),
-            required_context={"teammate_name", "achievement"},
+            required_context={"teammate_name", "achievement", "team"},
             default_values={}
         )
     }
