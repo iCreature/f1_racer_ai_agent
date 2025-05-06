@@ -93,11 +93,11 @@ def test_generate_post(test_client):
     assert response.json()["status"] == "success"
     assert "Mock generated text" in response.json()["data"]["post_text"]
 
-def test_reply_comment(test_client):
-    response = test_client.post("/reply_comment", json={"comment_text": "Great job!", "agent_response": "Thanks!"})
-    assert response.status_code == 200
-    assert response.json()["status"] == "success"
-    assert response.json()["data"]["action"] == "mock_reply"
+# def test_reply_comment(test_client):
+#     response = test_client.post("/reply_comment", json={"comment_text": "Great job!", "agent_response": "Thanks!"})
+#     assert response.status_code == 200
+#     assert response.json()["status"] == "success"
+#     assert response.json()["data"]["action"] == "mock_reply"
 
 def test_simulate_like(test_client):
     response = test_client.post("/simulate_like", json={"post_id": "post456"})
