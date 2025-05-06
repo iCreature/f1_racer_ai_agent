@@ -80,7 +80,7 @@ class TextGenerator(BaseModel):
 
     model: Pipeline
     template_handler: TemplateHandlerProtocol
-    max_length: int = 128
+    max_length: int = 256
     num_return_sequences: int = 1
     enable_fallback: bool = True
 
@@ -102,16 +102,27 @@ class TextGenerator(BaseModel):
         """Main generation workflow"""
         try:
             prompt = self.template_handler.format_template(template_name, context)
-
             return self._generate_with_llm(prompt)
 
-        except (ValueError, ValidationError) as e:
-             raise GenerationError(f"Template or context validation failed: {e}", original=e) from e
-
-        except Exception as e:
+        except (ValueError, KeyError) as e: # Catch specific formatting errors
+             raise GenerationError(f"Template formatting failed: {e}", original=e) from e
+        except Exception as e: # Catch potential errors from the LLM pipeline
+            logger.error(
+                action="llm_invocation_error",
+                response=str(e)
+            )
             if self.enable_fallback:
-                return self._fallback_response(template_name, context)
-            raise GenerationError("Text generation failed", original=e) from e
+                logger.warn(
+                    action="fallback_triggered",
+                    response={"template": template_name, "error": str(e)}
+                )
+                try:
+                    # Call the correct _fallback_response method
+                    return self._fallback_response(template_name, context)
+                except (ValueError, KeyError) as fallback_e:
+                     raise GenerationError(f"Fallback template formatting failed: {fallback_e}", original=fallback_e) from fallback_e
+            else:
+                raise GenerationError("Text generation failed", original=e) from e
 
     def _fallback_response(self, template_name: str, context: dict) -> str:
         """Template-based fallback mechanism"""
@@ -119,10 +130,7 @@ class TextGenerator(BaseModel):
             action="fallback_triggered",
             response={"template": template_name}
         )
-        try:
-            return self.template_handler.format_template(template_name, context)
-        except (ValueError, ValidationError) as e:
-            raise GenerationError(f"Fallback template formatting failed: {e}", original=e) from e
+        return self.template_handler.format_template(template_name, context)
 
     def _generate_with_llm(self, prompt: str) -> str:
         """Execute LLM pipeline with instrumentation"""
@@ -153,14 +161,6 @@ class TextGenerator(BaseModel):
             response={"output": result}
         )
         return result
-
-    def _fallback_response(self, template_name: str, context: dict) -> str:
-        """Template-based fallback mechanism"""
-        logger.warn(
-            action="fallback_triggered",
-            response={"template": template_name}
-        )
-        return self.template_handler.format_template(template_name, context)
 
 # ========================
 # Custom Exceptions
